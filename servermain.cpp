@@ -38,7 +38,7 @@ void readList(std::unordered_map<std::string, std::string> umap){
             char cur = departments[i];
             if(cur == ';'){
                 umap[departments.substr(beginning, i)] = backend_server;
-                cout << "DEBUG: Department read:" << departments.substr(beginning, i) << endl;
+                std::cout << "DEBUG: Department read:" << departments.substr(beginning, i) << std::endl;
                 beginning = i + 1;
             }
         }
