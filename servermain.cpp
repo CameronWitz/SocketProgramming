@@ -175,19 +175,21 @@ int main(void)
 
         socklen_t addr_len;
         int ret, port;
-        if((ret = getsockname(new_fd,(struct sockaddr *)&my_addr, &addr_len)) == -1){
+        if((ret = getsockname(new_fd, (struct sockaddr *)&their_addr, &addr_len)) == -1){
             perror("getsockname");
             exit(1);
         }
 
-        inet_ntop(my_addr.ss_family, 
-            get_in_addr((struct sockaddr *)&my_addr),
+        // need to change this to use client socket addr not my socket addr. 
+
+        inet_ntop(their_addr.ss_family, 
+            get_in_addr((struct sockaddr *)&their_addr),
             s, sizeof s);
 
-        if (my_addr.ss_family == AF_INET) {
-            port = ntohs(((struct sockaddr_in *)&my_addr)->sin_port);
-        } else if (my_addr.ss_family == AF_INET6) {
-            port = ntohs(((struct sockaddr_in6 *)&my_addr)->sin6_port);
+        if (their_addr.ss_family == AF_INET) {
+            port = ntohs(((struct sockaddr_in *)&their_addr)->sin_port);
+        } else if (their_addr.ss_family == AF_INET6) {
+            port = ntohs(((struct sockaddr_in6 *)&their_addr)->sin6_port);
         }
         else {
             perror("not ipv4 or ipv6");
