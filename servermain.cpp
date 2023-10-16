@@ -24,24 +24,27 @@
 
 #define BACKLOG 10   // how many pending connections queue will hold
 
-void readList(std::unordered_map<std::string, std::string> umap){
+void readList(std::unordered_map<std::string, std::string> &umap){
     std::ifstream infile;
     infile.open("list.txt");
     std::string backend_server;
     std::string departments;
+    size_t beginning;    
     
     while(infile >> backend_server){
         infile >> departments;
-        size_t beginning = 0;    
+        beginning = 0;
         std::vector<std::string> depts_vec;
         for(size_t i = 0; i < departments.length(); i++){
             char cur = departments[i];
             if(cur == ';'){
                 umap[departments.substr(beginning, i-beginning)] = backend_server;
-                std::cout << "DEBUG: Department read:" << departments.substr(beginning, i) << std::endl;
+                std::cout << "DEBUG: Department read:" << departments.substr(beginning, i-beginning) << std::endl;
                 beginning = i + 1;
             }
         }
+        umap[departments.substr(beginning, departments.length()-beginning)] = backend_server;
+        std::cout << "DEBUG: Department read:" << departments.substr(beginning, departments.length()-beginning) << std::endl;
     }
 
 }
@@ -76,12 +79,13 @@ int main(void)
     socklen_t sin_size;
     struct sigaction sa;
     int yes=1;
-    char s[INET6_ADDRSTRLEN];
+    // char s[INET6_ADDRSTRLEN];/
     int rv;
     std::unordered_map<std::string, std::string> dept_to_server;
 
     // read in the List.txt file into the unordered_map
     readList(dept_to_server);
+    std::cout << "DEBUG: Map[ECE] = " << dept_to_server["ECE"] << ", Expected: 1" << std::endl;
 
 
     // Specify the type of connection we want to host

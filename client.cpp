@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     char buf[MAXDATASIZE];
     struct addrinfo hints, *servinfo, *p;
     int rv;
-    char s[INET6_ADDRSTRLEN];
+    // char s[INET6_ADDRSTRLEN];
 
     // don't need this anymore
     // if (argc != 2) {
