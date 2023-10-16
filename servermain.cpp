@@ -88,7 +88,7 @@ int main(void)
 {
     int sockfd, new_fd;  // listen on sock_fd, new connection on new_fd
     struct addrinfo hints, *servinfo, *p;
-    struct sockaddr_storage their_addr; // connector's address information
+    struct sockaddr_storage their_addr, my_addr; // connector's address information
     socklen_t sin_size;
     struct sigaction sa;
     int yes=1;
@@ -168,11 +168,35 @@ int main(void)
 
 
         // Don't think i need this part
-        inet_ntop(their_addr.ss_family,
-            get_in_addr((struct sockaddr *)&their_addr),
+        // inet_ntop(their_addr.ss_family,
+        //     get_in_addr((struct sockaddr *)&their_addr),
+        //     s, sizeof s);
+        // printf("server: got connection from %s\n", s);
+
+        socklen_t addr_len;
+        int ret, port;
+        if((ret = getsockname(new_fd,(struct sockaddr *)&my_addr, &addr_len)) == -1){
+            perror("getsockname");
+            exit(1);
+        }
+
+        inet_ntop(my_addr.ss_family, 
+            get_in_addr((struct sockaddr *)&my_addr),
             s, sizeof s);
-        printf("server: got connection from %s\n", s);
+
+        if (my_addr.ss_family == AF_INET) {
+            port = ntohs(((struct sockaddr_in *)&my_addr)->sin_port);
+        } else if (my_addr.ss_family == AF_INET6) {
+            port = ntohs(((struct sockaddr_in6 *)&my_addr)->sin6_port);
+        }
+        else {
+            perror("not ipv4 or ipv6");
+            exit(1);
+        }
         
+        std::cout << "Receiving client over port number " << port << std::endl;
+       
+         
         if (!fork()) { // this is the child process
             close(sockfd); // child doesn't need the listener
 
