@@ -14,10 +14,37 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <signal.h>
+#include <unordered_map>
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <vector>
 
 #define PORT "23659"  // the port users will be connecting to
 
 #define BACKLOG 10   // how many pending connections queue will hold
+
+void readList(std::unordered_map<std::string, std::string> umap){
+    std::ifstream infile;
+    infile.open("list.txt");
+    std::string backend_server;
+    std::string departments;
+    
+    while(infile >> backend_server){
+        infile >> departments;
+        size_t beginning = 0;    
+        std::vector<std::string> depts_vec;
+        for(size_t i = 0; i < departments.length(); i++){
+            char cur = departments[i];
+            if(cur == ';'){
+                umap[departments.substr(beginning, i)] = backend_server;
+                cout << "DEBUG: Department read:" << departments.substr(beginning, i) << endl;
+                beginning = i + 1;
+            }
+        }
+    }
+
+}
 
 // invoked due to sigaction
 void sigchld_handler(int s)
@@ -51,6 +78,11 @@ int main(void)
     int yes=1;
     char s[INET6_ADDRSTRLEN];
     int rv;
+    std::unordered_map<std::string, std::string> dept_to_server;
+
+    // read in the List.txt file into the unordered_map
+    readList(dept_to_server);
+
 
     // Specify the type of connection we want to host
     memset(&hints, 0, sizeof hints);
