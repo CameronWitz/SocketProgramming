@@ -1,8 +1,8 @@
-SRCS := servermain.c client.c
-OBJS := $(SRCS:.c=.o)
+SRCS := servermain.cpp client.cpp
+OBJS := $(SRCS:.cpp=.o)
 
 # Compiler and compilation flags
-CC := gcc
+CC := g++
 CFLAGS := -g -Wall
 
 all: servermain client
@@ -13,7 +13,7 @@ servermain: servermain.o
 client: client.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-%.o: %.c
+%.o: %.cpp
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
