@@ -120,11 +120,11 @@ int main(void)
             continue;
         }
 
-        if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes,
-                sizeof(int)) == -1) {
-            perror("setsockopt");
-            exit(1);
-        }
+        // if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes,
+        //         sizeof(int)) == -1) {
+        //     perror("setsockopt");
+        //     exit(1);
+        // }
 
         if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
             close(sockfd);
@@ -179,7 +179,6 @@ int main(void)
             perror("getsockname");
             exit(1);
         }
-
         // need to change this to use client socket addr not my socket addr. 
 
         inet_ntop(their_addr.ss_family, 
