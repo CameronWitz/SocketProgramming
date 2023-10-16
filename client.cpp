@@ -11,6 +11,10 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <vector>
 
 #include <arpa/inet.h>
 
@@ -79,17 +83,29 @@ int main(int argc, char *argv[])
 
     freeaddrinfo(servinfo); // all done with this structure
 
+    // never supposed to exit from here 
+    while(1){
+        std::string dept_query;
+        std::cout << "-----Start a new query-----";
+        std::cout << "Enter Department Name: ";
+        std::cin >> dept_query; // read in the query
+        std::cout << std::endl;
+        
+        if (send(sockfd, dept_query.c_str(), dept_query.length(), 0) == -1){
+            perror("send");
+            exit(1);
+        }
+                
+        if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
+            perror("recv");
+            exit(1);
+        }
 
-    if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
-        perror("recv");
-        exit(1);
+        buf[numbytes] = '\0';
+        std::string response(buf);
+        std::cout << "Department " << dept_query << "is associated with server " << response << std::endl;
     }
 
-    buf[numbytes] = '\0';
-
-    printf("client: received '%s'\n",buf);
-
-    close(sockfd);
-
     return 0;
+   
 }

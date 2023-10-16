@@ -59,6 +59,7 @@
     "variant": "c",
     "vector": "c",
     "algorithm": "c",
-    "wait.h": "c"
+    "wait.h": "c",
+    "iostream": "cpp"
   }
 }

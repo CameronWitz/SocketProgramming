@@ -22,7 +22,8 @@
 
 #define PORT "23659"  // the port users will be connecting to
 
-#define BACKLOG 10   // how many pending connections queue will hold
+#define BACKLOG 10  // how many pending connections queue will hold
+#define MAXDATASIZE 1024 // max request size (Department name), unlikely to be larger than this
 
 void readList(std::unordered_map<std::string, std::string> &umap){
     std::ifstream infile;
@@ -161,10 +162,29 @@ int main(void)
         
         if (!fork()) { // this is the child process
             close(sockfd); // child doesn't need the listener
-            if (send(new_fd, "Hello, world!", 13, 0) == -1)
-                perror("send");
-            close(new_fd);
-            exit(0);
+
+            while(1){
+                // Respond to any queries from the client
+                int numbytes;
+                char buf[MAXDATASIZE];
+                if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
+                    perror("recv");
+                    exit(1);
+                }
+                buf[numbytes] = '\0';
+
+                std::string request(buf);
+                std::cout << "Client requested: " << request << std::endl;
+                
+                std::string reply = dept_to_server[request];
+                std::cout << "Replying with: " << reply << std::endl;
+                
+                
+                //TODO: will need to make sure all is sent
+                if (send(new_fd, reply.c_str(), reply.length(), 0) == -1){
+                    perror("send");
+                }
+            }
         }
 
         close(new_fd);  // parent doesn't need this
