@@ -88,10 +88,10 @@ int main(void)
 {
     int sockfd, new_fd;  // listen on sock_fd, new connection on new_fd
     struct addrinfo hints, *servinfo, *p;
-    struct sockaddr_storage their_addr, my_addr; // connector's address information
+    struct sockaddr_storage their_addr;//, my_addr; // connector's address information
     socklen_t sin_size;
     struct sigaction sa;
-    int yes=1;
+    // int yes=1;
     char s[INET6_ADDRSTRLEN];
     int rv;
     std::unordered_map<std::string, std::string> dept_to_server;
@@ -165,35 +165,36 @@ int main(void)
             continue;
         }
 
+
         // Don't think i need this part
         // inet_ntop(their_addr.ss_family,
         //     get_in_addr((struct sockaddr *)&their_addr),
         //     s, sizeof s);
         // printf("server: got connection from %s\n", s);
 
-        socklen_t addr_len = sizeof my_addr;
-        int ret, port;
-        if((ret = getsockname(sockfd, (struct sockaddr *)&my_addr, &addr_len)) == -1){
-            perror("getsockname");
-            exit(1);
-        }
-        // need to change this to use client socket addr not my socket addr. 
+        // socklen_t addr_len = sizeof my_addr;
+        // int ret, port;
+        // if((ret = getsockname(new_fd, (struct sockaddr *)&my_addr, &addr_len)) == -1){
+        //     perror("getsockname");
+        //     exit(1);
+        // }
+     
+        // All this is just to confirm that the port number is the same as what was specified.
+        // inet_ntop(my_addr.ss_family, 
+        //     get_in_addr((struct sockaddr *)&my_addr),
+        //     s, sizeof s);
 
-        inet_ntop(my_addr.ss_family, 
-            get_in_addr((struct sockaddr *)&my_addr),
-            s, sizeof s);
-
-        if (my_addr.ss_family == AF_INET) {
-            std::cout << "IPV4" << std::endl;
-            port = ntohs(((struct sockaddr_in *)&my_addr)->sin_port);
-        } else if (my_addr.ss_family == AF_INET6) {
-            std::cout << "IPV6" << std::endl;
-            port = ntohs(((struct sockaddr_in6 *)&my_addr)->sin6_port);
-        }
-        else {
-            perror("not ipv4 or ipv6");
-            exit(1);
-        }
+        // if (my_addr.ss_family == AF_INET) {
+        //     std::cout << "IPV4" << std::endl;
+        //     port = ntohs(((struct sockaddr_in *)&my_addr)->sin_port);
+        // } else if (my_addr.ss_family == AF_INET6) {
+        //     std::cout << "IPV6" << std::endl;
+        //     port = ntohs(((struct sockaddr_in6 *)&my_addr)->sin6_port);
+        // }
+        // else {
+        //     perror("not ipv4 or ipv6");
+        //     exit(1);
+        // }
         
         std::cout << "Receiving client over port number " << port << std::endl;
        
@@ -206,7 +207,6 @@ int main(void)
                 int numbytes;
                 char buf[MAXDATASIZE];
 
-                // TODO: If connection is closed, need to exit this process. 
                 if ((numbytes = recv(new_fd, buf, MAXDATASIZE-1, 0)) == -1) {
                     perror("recv");
                     exit(1);
