@@ -25,27 +25,39 @@
 #define BACKLOG 10  // how many pending connections queue will hold
 #define MAXDATASIZE 1024 // max request size (Department name), unlikely to be larger than this
 
-void readList(std::unordered_map<std::string, std::string> &umap){
+void readList(std::unordered_map<std::string, std::string> &dept_to_server, std::unordered_map<std::string, std::vector<std::string>> &server_to_dept ){
     std::ifstream infile;
     infile.open("list.txt");
     std::string backend_server;
     std::string departments;
-    size_t beginning;    
+    size_t beginning;
+    std::vector<std::string> servers;
     
     while(infile >> backend_server){
+        servers.push_back(backend_server);
         infile >> departments;
         beginning = 0;
         std::vector<std::string> depts_vec;
         for(size_t i = 0; i < departments.length(); i++){
             char cur = departments[i];
             if(cur == ';'){
-                umap[departments.substr(beginning, i-beginning)] = backend_server;
+                dept_to_server[departments.substr(beginning, i-beginning)] = backend_server;
                 std::cout << "DEBUG: Department read:" << departments.substr(beginning, i-beginning) << std::endl;
                 beginning = i + 1;
+                depts_vec.push_back(departments.substr(beginning, i-beginning));
             }
         }
-        umap[departments.substr(beginning, departments.length()-beginning)] = backend_server;
-        std::cout << "DEBUG: Department read:" << departments.substr(beginning, departments.length()-beginning) << std::endl;
+        dept_to_server[departments.substr(beginning, departments.length()-beginning)] = backend_server;
+        depts_vec.push_back(departments.substr(beginning, departments.length()-beginning));
+        server_to_dept[backend_server] = depts_vec;
+    }
+
+    std::cout << "Total num of Backend Servers: " << servers.size() << std::endl;
+    for(std::vector<std::string>::iterator iter = servers.begin(); iter < servers.end(); iter ++){
+        std::string server_num = (*iter);
+        std::vector<std::string> these_depts = server_to_dept[server_num];
+        std::cout << "Backend Servers " << server_num << " contains " << these_depts.size();
+        std::cout << " distinct departments" << std::endl;
     }
 
 }
@@ -80,14 +92,13 @@ int main(void)
     socklen_t sin_size;
     struct sigaction sa;
     int yes=1;
-    // char s[INET6_ADDRSTRLEN];/
+    char s[INET6_ADDRSTRLEN];
     int rv;
     std::unordered_map<std::string, std::string> dept_to_server;
+    std::unordered_map<std::string, std::vector<std::string>> server_to_dept;
 
     // read in the List.txt file into the unordered_map
-    readList(dept_to_server);
-    std::cout << "DEBUG: Map[ECE] = " << dept_to_server["ECE"] << ", Expected: 1" << std::endl;
-
+    readList(dept_to_server, server_to_dept);
 
     // Specify the type of connection we want to host
     memset(&hints, 0, sizeof hints);
@@ -154,11 +165,13 @@ int main(void)
             continue;
         }
 
+
+
         // Don't think i need this part
-        // inet_ntop(their_addr.ss_family,
-        //     get_in_addr((struct sockaddr *)&their_addr),
-        //     s, sizeof s);
-        // printf("server: got connection from %s\n", s);
+        inet_ntop(their_addr.ss_family,
+            get_in_addr((struct sockaddr *)&their_addr),
+            s, sizeof s);
+        printf("server: got connection from %s\n", s);
         
         if (!fork()) { // this is the child process
             close(sockfd); // child doesn't need the listener
@@ -173,12 +186,24 @@ int main(void)
                     perror("recv");
                     exit(1);
                 }
+
+                if(numbytes == 0){
+                    std::cout << "Client closed connection, this process will exit" << std::endl;
+                    close(new_fd);
+                    exit(0);
+                }
+
                 buf[numbytes] = '\0';
 
                 std::string request(buf);
                 std::cout << "Client requested: " << request << std::endl;
+    
+                std::string reply;
+                if(dept_to_server.find(request) == dept_to_server.end()){
+                    reply = "Not Found";
+                }
                 
-                std::string reply = dept_to_server[request];
+                reply = dept_to_server[request];
                 std::cout << "Replying with: " << reply << std::endl;
                 
                 
