@@ -167,7 +167,7 @@ int main(void)
                 // Respond to any queries from the client
                 int numbytes;
                 char buf[MAXDATASIZE];
-                if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
+                if ((numbytes = recv(new_fd, buf, MAXDATASIZE-1, 0)) == -1) {
                     perror("recv");
                     exit(1);
                 }
