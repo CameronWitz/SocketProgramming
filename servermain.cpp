@@ -234,8 +234,13 @@ int main(void)
                     std::cout << "HERE" << std::endl;
                     reply = "Not Found"; 
                     std::cout << "Department " << request << " does not show up in backend server ";
+                    int firsttime = 1;
                     for(auto &entry : server_to_dept){
-                        std::cout << entry.first << ", ";
+                        if(!firsttime){
+                            std::cout << ", ";
+                        }
+                        firsttime = 0;
+                        std::cout << entry.first;
                     }
                     std::cout << std::endl;
                 }
