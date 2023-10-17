@@ -199,7 +199,7 @@ int main(void)
         //     exit(1);
         // }
         
-        std::cout << "Receiving client over port number " << PORT << std::endl;
+        // std::cout << "Receiving client over port number " << PORT << std::endl;
        
          
         if (!fork()) { // this is the child process
@@ -226,7 +226,7 @@ int main(void)
                 std::string request(buf);
 
                 std::cout << "Main server has received the request on Department " << request;
-                std::cout << "from client " << cur_client << "using TCP over port " << PORT << std::endl;
+                std::cout << "from client " << cur_client << " using TCP over port " << PORT << std::endl;
 
                 std::string reply;
 
@@ -252,7 +252,7 @@ int main(void)
                 }
                 if(reply == "Not Found"){
                     std::cout << "The Main Server has sent “Department Name: Not found” to client " ;
-                    std::cout << cur_client << "using TCP over port" << PORT << std::endl;
+                    std::cout << cur_client << " using TCP over port" << PORT << std::endl;
                 }
                 else{
                     std::cout << "Main Server has sent searching result to client " << cur_client;
