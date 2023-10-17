@@ -25,6 +25,9 @@
 #define BACKLOG 10  // how many pending connections queue will hold
 #define MAXDATASIZE 1024 // max request size (Department name), unlikely to be larger than this
 
+// This function takes in two unordered_maps and populates them with the relevant data from list.tx
+// at the end of this function, dept_to_server is a hashmap which given a department, returns it's associated server.
+// server_to_dept alternatively takes in a server and returns a vector of strings where each element of the vector is a distinct department that server is associated with. 
 void readList(std::unordered_map<std::string, std::string> &dept_to_server, std::unordered_map<std::string, std::vector<std::string>> &server_to_dept ){
     std::ifstream infile;
     infile.open("list.txt");
@@ -41,16 +44,23 @@ void readList(std::unordered_map<std::string, std::string> &dept_to_server, std:
         for(size_t i = 0; i < departments.length(); i++){
             char cur = departments[i];
             if(cur == ';'){
-                dept_to_server[departments.substr(beginning, i-beginning)] = backend_server;
-                // std::cout << "DEBUG: Department read:" << departments.substr(beginning, i-beginning) << std::endl;
+                std::string cur_dept = departments.substr(beginning, i-beginning);
+                // only add the department to the vector of unique servers if it is not already in the hashmap
+                if(dept_to_server.find(cur_dept) != dept_to_server.end())
+                    depts_vec.push_back(cur_dept);
+                
+                dept_to_server[cur_dept] = backend_server;
                 beginning = i + 1;
-                depts_vec.push_back(departments.substr(beginning, i-beginning));
+                
             }
         }
-        dept_to_server[departments.substr(beginning, departments.length()-beginning)] = backend_server;
-        depts_vec.push_back(departments.substr(beginning, departments.length()-beginning));
+        std::string last_dept = departments.substr(beginning, departments.length()-beginning);
+        if(dept_to_server.find(last_dept) != dept_to_server.end())
+            depts_vec.push_back(last_dept);
+        dept_to_server[last_dept] = backend_server;
         server_to_dept[backend_server] = depts_vec;
     }
+    // Print out the info according to the output given. 
     std::cout << "Main server has read the department list from list.txt." << std::endl;
 
     std::cout << "Total num of Backend Servers: " << servers.size() << std::endl;
@@ -184,7 +194,7 @@ int main(void)
                 }
 
                 if(numbytes == 0){
-                    std::cout << "Client closed connection, this process will exit" << std::endl;
+                    // std::cout << "Client closed connection, this process will exit" << std::endl;
                     close(new_fd);
                     exit(0);
                 }
@@ -193,7 +203,7 @@ int main(void)
                 std::string request(buf);
 
                 std::cout << "Main server has received the request on Department " << request;
-                std::cout << "from client " << cur_client << " using TCP over port " << PORT << std::endl;
+                std::cout << " from client " << cur_client << " using TCP over port " << PORT << std::endl;
 
                 std::string reply;
 
@@ -215,7 +225,6 @@ int main(void)
                     std::cout << request << " shows up in backend server " << reply << std::endl;
                 }
 
-                //TODO: will need to make sure all is sent
                 if (send(new_fd, reply.c_str(), reply.length(), 0) == -1){
                     perror("send");
                 }

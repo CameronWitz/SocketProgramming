@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 
         // if the connection is closed
         if(numbytes == 0){
-            std::cout << "Connection closed from server, exiting" << std::endl;
+            // std::cout << "Connection closed from server, exiting" << std::endl;
             exit(1);
         }
 
