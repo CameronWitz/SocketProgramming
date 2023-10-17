@@ -51,6 +51,7 @@ void readList(std::unordered_map<std::string, std::string> &dept_to_server, std:
         depts_vec.push_back(departments.substr(beginning, departments.length()-beginning));
         server_to_dept[backend_server] = depts_vec;
     }
+    std::cout << "Main server has read the department list from list.txt." << std::endl;
 
     std::cout << "Total num of Backend Servers: " << servers.size() << std::endl;
     for(std::vector<std::string>::iterator iter = servers.begin(); iter < servers.end(); iter ++){
@@ -91,6 +92,7 @@ int main(void)
     struct sockaddr_storage their_addr;//, my_addr; // connector's address information
     socklen_t sin_size;
     struct sigaction sa;
+    int clients = 0;
     // int yes=1;
     char s[INET6_ADDRSTRLEN];
     int rv;
@@ -155,7 +157,7 @@ int main(void)
         exit(1);
     }
 
-    printf("server: waiting for connections...\n");
+    std::cout << "Main server is up and running." << std::endl;
 
     while(1) {  // main accept() loop
         sin_size = sizeof their_addr;
@@ -164,7 +166,7 @@ int main(void)
             perror("accept");
             continue;
         }
-
+        clients ++;
 
         // Don't think i need this part
         // inet_ntop(their_addr.ss_family,
@@ -200,6 +202,7 @@ int main(void)
        
          
         if (!fork()) { // this is the child process
+            int cur_client = clients;
             close(sockfd); // child doesn't need the listener
 
             while(1){
@@ -219,23 +222,42 @@ int main(void)
                 }
 
                 buf[numbytes] = '\0';
-
                 std::string request(buf);
-                std::cout << "Client requested: " << request << std::endl;
-    
+
+                std::cout << "Main server has received the request on Department " << request;
+                std::cout << "from client " << cur_client << "using TCP over port " << PORT << std::endl;
+
                 std::string reply;
+
                 if(dept_to_server.find(request) == dept_to_server.end()){
-                    reply = "Not Found";
+                    reply = "Not Found"; 
+                    std::cout << "Department " << request << "does not show up in backend server";
+                    for (auto i = server_to_dept.begin(); i != server_to_dept.end(); i++){
+                        std::cout << i->first;
+                        if(i != std::prev(server_to_dept.end()) )
+                            std::cout << ", ";
+                    }
+                    std::cout << std::endl;
                 }
-                
-                reply = dept_to_server[request];
-                std::cout << "Replying with: " << reply << std::endl;
-                
-                
+
+                else{
+                    reply = dept_to_server[request]; 
+                    std::cout << request << " shows up in backend server " << reply << std::endl;
+                }
+
                 //TODO: will need to make sure all is sent
                 if (send(new_fd, reply.c_str(), reply.length(), 0) == -1){
                     perror("send");
                 }
+                if(reply == "Not Found"){
+                    std::cout << "The Main Server has sent “Department Name: Not found” to client " ;
+                    std::cout << cur_client << "using TCP over port" << PORT << std::endl;
+                }
+                else{
+                    std::cout << "Main Server has sent searching result to client " << cur_client;
+                    std::cout << "using TCP over port " << PORT << std::endl;
+                }
+
             }
         }
 

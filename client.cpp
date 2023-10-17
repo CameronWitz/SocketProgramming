@@ -40,11 +40,6 @@ int main(int argc, char *argv[])
     int rv;
     // char s[INET6_ADDRSTRLEN];
 
-    // don't need this anymore
-    // if (argc != 2) {
-    //     fprintf(stderr,"usage: client hostname\n");
-    //     exit(1);
-    // }
 
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC;
@@ -77,16 +72,13 @@ int main(int argc, char *argv[])
         return 2;
     }
 
-    // inet_ntop(p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr),
-    //         s, sizeof s);
-    // printf("client: connecting to %s\n", s);
+    std::cout << "Client is up and running." << std::endl;
 
     freeaddrinfo(servinfo); // all done with this structure
 
     // never supposed to exit from here 
     while(1){
         std::string dept_query;
-        std::cout << "-----Start a new query-----";
         std::cout << "Enter Department Name: ";
         std::cin >> dept_query; // read in the query
         std::cout << std::endl;
@@ -95,15 +87,32 @@ int main(int argc, char *argv[])
             perror("send");
             exit(1);
         }
+
+        std::cout << "Client has sent Department " << dept_query << "to Main Server using TCP." << std::endl;
                 
         if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
             perror("recv");
             exit(1);
         }
 
+        // if the connection is closed
+        if(numbytes == 0){
+            std::cout << "Connection closed from server, exiting" << std::endl;
+            exit(1);
+        }
+
         buf[numbytes] = '\0';
         std::string response(buf);
-        std::cout << "Department " << dept_query << "is associated with server " << response << std::endl;
+
+        // check if not found:
+        if(response == "Not Found"){
+            std::cout << "Department " << dept_query << " not found." << std::endl;
+        }
+        else{
+            std::cout << "Department " << dept_query << "is associated with server " << response << std::endl;
+        }
+
+        std::cout << "-----Start a new query-----";
     }
 
     return 0;
