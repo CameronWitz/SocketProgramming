@@ -240,7 +240,6 @@ int main(void)
                     }
                     std::cout << std::endl;
                 }
-
                 else{
                     reply = dept_to_server[request]; 
                     std::cout << request << " shows up in backend server " << reply << std::endl;
