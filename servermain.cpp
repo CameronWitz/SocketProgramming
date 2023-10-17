@@ -231,13 +231,14 @@ int main(void)
                 std::string reply;
 
                 if(dept_to_server.find(request) == dept_to_server.end()){
+                    std::cout << "HERE" << std::endl;
                     reply = "Not Found"; 
                     std::cout << "Department " << request << "does not show up in backend server";
-                    for (auto i = server_to_dept.begin(); i != server_to_dept.end(); i++){
-                        std::cout << i->first;
-                        if(i != std::prev(server_to_dept.end()) )
-                            std::cout << ", ";
-                    }
+                    // for (auto i = server_to_dept.begin(); i != server_to_dept.end(); i++){
+                    //     std::cout << i->first;
+                    //     if(i != std::prev(server_to_dept.end()) )
+                    //         std::cout << ", ";
+                    // }
                     std::cout << std::endl;
                 }
                 else{
