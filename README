@@ -1,0 +1,38 @@
+Cameron Witz
+8861350659
+Ubuntu 22.04
+I completed the entire assignment myself, and used the Beej's Guide as a base.
+The files I have for this assignment are as follows:
+
+Makefile - use to create the executables and .o files. This makefile supports all the required commands listed.
+
+client.cpp - this file contains the client code. The client connects to the server over tcp, and supports the functionality to have queries input
+through stdin.
+
+servermain.cpp - this is the code for the server. It first reads in the list.txt information and creates some useful datastructures, and then it
+will accept connections from clients. It is set to go on port 23659
+
+The messages I exchange are very simple. All requests are taken as they come and it is assumed the request is read as a department name.
+Responses from the server will be either the server associated with the department, or "Not found". The client checks to see if it is not found
+and acts accordingly.
+
+Reused code/Outside sources:
+
+The entire baseline for both client and serverman.cpp are from Beej's tutorial provided in the pdf of the assignment.
+As there is so much code that was used from this tutorial, I think it might be easier for me to just list the parts that I did completely on my own which are
+as follows:
+
+Again THIS IS THE CODE THAT I DID. The rest was used from the guide.
+
+in servermain.cpp:
+
+- readList function
+- lines 112-113
+- lines 122-126
+- lines 180-241
+
+in client.cpp:
+
+- line 48
+- line 75
+- lines 80-1fa-rotate-180
