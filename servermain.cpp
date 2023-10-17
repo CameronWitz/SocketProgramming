@@ -231,7 +231,7 @@ int main(void)
                 std::string reply;
 
                 if(dept_to_server.find(request) == dept_to_server.end()){
-                    std::cout << "HERE" << std::endl;
+                    // std::cout << "HERE" << std::endl;
                     reply = "Not Found"; 
                     std::cout << "Department " << request << " does not show up in backend server ";
                     int firsttime = 1;
@@ -248,9 +248,8 @@ int main(void)
                     reply = dept_to_server[request]; 
                     std::cout << request << " shows up in backend server " << reply << std::endl;
                 }
-
-                //TODO: will need to make sure all is sent
-                if (send(new_fd, reply.c_str(), reply.length(), 0) == -1){
+              
+                if ( send(new_fd, reply.c_str(), reply.length(), 0) == -1){
                     perror("send");
                 }
                 if(reply == "Not Found"){
@@ -259,7 +258,7 @@ int main(void)
                 }
                 else{
                     std::cout << "Main Server has sent searching result to client " << cur_client;
-                    std::cout << "using TCP over port " << PORT << std::endl;
+                    std::cout << " using TCP over port " << PORT << std::endl;
                 }
 
             }
