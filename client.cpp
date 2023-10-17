@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
         std::string dept_query;
         std::cout << "Enter Department Name: ";
         std::cin >> dept_query; // read in the query
-        std::cout << std::endl;
+
         
         if (send(sockfd, dept_query.c_str(), dept_query.length(), 0) == -1){
             perror("send");
@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
             std::cout << "Department " << dept_query << "is associated with server " << response << std::endl;
         }
 
-        std::cout << "-----Start a new query-----";
+        std::cout << "-----Start a new query-----" << std::endl;
     }
 
     return 0;
