@@ -46,7 +46,7 @@ void readList(std::unordered_map<std::string, std::string> &dept_to_server, std:
             if(cur == ';'){
                 std::string cur_dept = departments.substr(beginning, i-beginning);
                 // only add the department to the vector of unique servers if it is not already in the hashmap
-                if(dept_to_server.find(cur_dept) != dept_to_server.end())
+                if(dept_to_server.find(cur_dept) == dept_to_server.end())
                     depts_vec.push_back(cur_dept);
                 
                 dept_to_server[cur_dept] = backend_server;
@@ -55,7 +55,7 @@ void readList(std::unordered_map<std::string, std::string> &dept_to_server, std:
             }
         }
         std::string last_dept = departments.substr(beginning, departments.length()-beginning);
-        if(dept_to_server.find(last_dept) != dept_to_server.end())
+        if(dept_to_server.find(last_dept) == dept_to_server.end())
             depts_vec.push_back(last_dept);
         dept_to_server[last_dept] = backend_server;
         server_to_dept[backend_server] = depts_vec;
