@@ -168,40 +168,7 @@ int main(void)
             continue;
         }
         clients ++;
-
-        // Don't think i need this part
-        // inet_ntop(their_addr.ss_family,
-        //     get_in_addr((struct sockaddr *)&their_addr),
-        //     s, sizeof s);
-        // printf("server: got connection from %s\n", s);
-
-        // socklen_t addr_len = sizeof my_addr;
-        // int ret, port;
-        // if((ret = getsockname(new_fd, (struct sockaddr *)&my_addr, &addr_len)) == -1){
-        //     perror("getsockname");
-        //     exit(1);
-        // }
-     
-        // All this is just to confirm that the port number is the same as what was specified.
-        // inet_ntop(my_addr.ss_family, 
-        //     get_in_addr((struct sockaddr *)&my_addr),
-        //     s, sizeof s);
-
-        // if (my_addr.ss_family == AF_INET) {
-        //     std::cout << "IPV4" << std::endl;
-        //     port = ntohs(((struct sockaddr_in *)&my_addr)->sin_port);
-        // } else if (my_addr.ss_family == AF_INET6) {
-        //     std::cout << "IPV6" << std::endl;
-        //     port = ntohs(((struct sockaddr_in6 *)&my_addr)->sin6_port);
-        // }
-        // else {
-        //     perror("not ipv4 or ipv6");
-        //     exit(1);
-        // }
-        
-        // std::cout << "Receiving client over port number " << PORT << std::endl;
-       
-         
+              
         if (!fork()) { // this is the child process
             int cur_client = clients;
             close(sockfd); // child doesn't need the listener
@@ -231,7 +198,6 @@ int main(void)
                 std::string reply;
 
                 if(dept_to_server.find(request) == dept_to_server.end()){
-                    std::cout << "HERE" << std::endl;
                     reply = "Not Found"; 
                     std::cout << "Department " << request << " does not show up in backend server ";
                     int firsttime = 1;
