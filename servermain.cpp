@@ -42,7 +42,7 @@ void readList(std::unordered_map<std::string, std::string> &dept_to_server, std:
             char cur = departments[i];
             if(cur == ';'){
                 dept_to_server[departments.substr(beginning, i-beginning)] = backend_server;
-                std::cout << "DEBUG: Department read:" << departments.substr(beginning, i-beginning) << std::endl;
+                // std::cout << "DEBUG: Department read:" << departments.substr(beginning, i-beginning) << std::endl;
                 beginning = i + 1;
                 depts_vec.push_back(departments.substr(beginning, i-beginning));
             }
@@ -99,6 +99,7 @@ int main(void)
     std::unordered_map<std::string, std::string> dept_to_server;
     std::unordered_map<std::string, std::vector<std::string>> server_to_dept;
 
+    std::cout << "Main server is up and running." << std::endl;
     // read in the List.txt file into the unordered_map
     readList(dept_to_server, server_to_dept);
 
@@ -157,7 +158,7 @@ int main(void)
         exit(1);
     }
 
-    std::cout << "Main server is up and running." << std::endl;
+    
 
     while(1) {  // main accept() loop
         sin_size = sizeof their_addr;
