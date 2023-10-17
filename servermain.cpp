@@ -93,8 +93,8 @@ int main(void)
     socklen_t sin_size;
     struct sigaction sa;
     int clients = 0;
-    // int yes=1;
-    char s[INET6_ADDRSTRLEN];
+    int yes=1;
+    // char s[INET6_ADDRSTRLEN];
     int rv;
     std::unordered_map<std::string, std::string> dept_to_server;
     std::unordered_map<std::string, std::vector<std::string>> server_to_dept;
@@ -198,7 +198,7 @@ int main(void)
         //     exit(1);
         // }
         
-        std::cout << "Receiving client over port number " << port << std::endl;
+        std::cout << "Receiving client over port number " << PORT << std::endl;
        
          
         if (!fork()) { // this is the child process
