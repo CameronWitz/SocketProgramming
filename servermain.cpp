@@ -225,7 +225,7 @@ int main(void)
                 }
                 else{
                     std::cout << "Main Server has sent searching result to client " << cur_client;
-                    std::cout << "using TCP over port " << PORT << std::endl;
+                    std::cout << " using TCP over port " << PORT << std::endl;
                 }
 
             }

@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
             exit(1);
         }
 
-        std::cout << "Client has sent Department " << dept_query << "to Main Server using TCP." << std::endl;
+        std::cout << "Client has sent Department " << dept_query << " to Main Server using TCP." << std::endl;
                 
         if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
             perror("recv");
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
             std::cout << "Department " << dept_query << " not found." << std::endl;
         }
         else{
-            std::cout << "Department " << dept_query << "is associated with server " << response << std::endl;
+            std::cout << "Department " << dept_query << " is associated with server " << response << std::endl;
         }
 
         std::cout << "-----Start a new query-----" << std::endl;
